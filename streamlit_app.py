@@ -6,12 +6,12 @@ tab1, tab2, tab3 = st.tabs(["send file with POST", "send file with POST and GET"
 
 ##### [EASY] send and retrieve info in a single POST request
 with tab1:
-    st.markdown(""" Sending image and processing happens on the same request,
+    st.markdown(""" Sending an image and processing happens on the same request,
                 this is the simplest way, but not the best. \n
                 Because the user will have to wait for the processing to finish,
                 and the server will be busy processing the image. \n
                 The best way is to send the image in a POST request,
-                and the server will process the image and return a link. \n
+                and the server will return a link and process the image in the background. \n
                 The user can do other things while the server is processing the image
                 and the server can process other requests.
                 Refer to the next tab for the best way""".replace("\t", ""))
