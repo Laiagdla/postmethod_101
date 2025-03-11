@@ -16,14 +16,14 @@ with tab1:
                 and the server can process other requests.
                 Refer to the next tab for the best way""".replace("\t", ""))
 
-    image_name_simple = st.text_input("Enter image name for simple request")
+    image_name_simple = st.text_input("Enter image name for simple request", key="simple-image-name")
     with st.expander("POST upload and receive"):
         col1, col2 = st.columns(2, gap="large")
         st.subheader("SEND IMAGE AND RECEIVE A PREDECTION IN THE SAME REQUEST")
         with col1:
-            image_simple = st.file_uploader("select Image for request", type=["jpg", "png", "jpeg"])
+            image_simple = st.file_uploader("select Image for request", type=["jpg", "png", "jpeg"], key="simple uploader")
         with col2:
-            if st.button("Send Image and predict"):
+            if st.button("Send Image and predict", key="simple-post"):
                 if image_simple is not None:
                     files = {"image": (image_simple.name, image_simple.getvalue())}
                     url_post = "http://localhost:8000/simple/"
@@ -44,12 +44,12 @@ with tab2:
 
         col1, col2 = st.columns(2, gap="large")
         with col1:
-            image = st.file_uploader("select Image", type=["jpg", "png", "jpeg"])
+            image = st.file_uploader("select Image", type=["jpg", "png", "jpeg"], key="post-uploader")
 
             st.write("You can upload an image and save it to the server")
 
         with col2:
-            if st.button("Save Image"):
+            if st.button("Save Image", key="post"):
                 if image is not None:
                     files = {"image": (image.name, image.getvalue()),
                             "name": (None, image_name)}
@@ -61,7 +61,7 @@ with tab2:
 
     with st.expander("GET download"):
         st.subheader("DOWNLOAD IMAGE FROM SERVER")
-        if st.button("Get Image"):
+        if st.button("Get Image", key='get'):
             url_get = "http://localhost:8000/get_image/"
             getimage = requests.get(url_get, params={"name": image_name})
             col1, col2 = st.columns(2, gap="large")
@@ -80,7 +80,7 @@ with tab3:
 
     st.write("You can upload multiple images and save them to the server")
 
-    if st.button("Save Images"):
+    if st.button("Save Images", key='multiple'):
         if images is not None:
             files = [("images", (image.name, image.getvalue())) for image in images]
             response = requests.post("http://localhost:8000/save_images/",

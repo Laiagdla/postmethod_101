@@ -45,15 +45,15 @@ def save_predictions(predictions):
     with open("predictions.json", "w") as f:
         json.dump(predictions, f)
 
-predictions = load_predictions()
+api.state.predictions = load_predictions()
 
 # simulated long running model prediction
 def run_model_prediction(name):
     # MODEL PREDICTION
     # prediction = api.state.model.predict(img)
     sleep(10)  # Simulate a long-running task
-    predictions[name] = "model prediction" #prediction
-    save_predictions(predictions)
+    api.state.predictions[name] = "model prediction" #prediction
+    save_predictions(api.state.predictions)
 
 
 # single file upload to server with additional fields (name, optional)
@@ -76,8 +76,8 @@ async def save_image(image: Annotated[UploadFile, File()],
 # get the image with the name coming from the post method
 @api.get("/get_image")
 async def get_image(name: str):
-    print(predictions)
-    while predictions.get(name) is None:
+    print(api.state.predictions)
+    while api.state.predictions.get(name) is None:
         sleep(1)
         return PlainTextResponse("processing", status_code=202)
 
@@ -85,7 +85,7 @@ async def get_image(name: str):
     status = "completed"
     headers = { "filename": str(filename),
                 "status": status,
-                "prediction": predictions[name]}
+                "prediction": api.state.predictions[name]}
     return FileResponse(filename, headers=headers)
 
 # upload multiple files to server
