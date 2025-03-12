@@ -9,11 +9,11 @@ BASE_URL="http://localhost:8000"
 ##### [EASY] send and retrieve info in a single POST request
 with tab1:
     st.markdown(""" Sending an image and processing happens on the same request,
-                this is the simplest way, but not the best. \n
+                this is the simplest way, but not the best.  \n
                 Because the user will have to wait for the processing to finish,
-                and the server will be busy processing the image. \n
+                and the server will be busy processing the image.  \n
                 The best way is to send the image in a POST request,
-                and the server will return a link and process the image in the background. \n
+                and the server will return a link and process the image in the background.  \n
                 The user can do other things while the server is processing the image
                 and the server can process other requests.
                 Refer to the next tab for the best way""".replace("\t", ""))
@@ -36,9 +36,9 @@ with tab1:
 
 ##### [ADVANCED] send and retrieve indo with POST and GET
 with tab2:
-    st.write("""sending image and processing happens on different requests, \n
-                the file is sent in a POST request, that will return a link, \n
-                then the user can get the image using the link, \n""")
+    st.write("""sending image and processing happens on different requests,
+                the file is sent in a POST request, that will return a link,
+                then the user can get the image using the link""")
 
     image_name = st.text_input("Enter image name for POST and GET request")
     with st.expander("POST upload"):
