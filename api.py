@@ -2,10 +2,12 @@ from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.responses import FileResponse, PlainTextResponse
 from PIL import Image as PILimage
 from io import BytesIO
+from pydantic import BaseModel
 from typing import List, Annotated
 from pathlib import Path
 from glob import glob
 from time import sleep
+from datetime import date
 import json
 
 api = FastAPI()
@@ -97,3 +99,15 @@ def save_images(images: List[UploadFile] = File(...)):
 
     return {"status": "images saved to server",
             "filenames": [image.filename for image in images]}
+
+#receive form data
+class Stform(BaseModel):
+    slider: int = 0
+    check: bool = True
+    description: str = "optional text"
+    day: date # extra datatype
+
+@api.post("/form_submission")
+def form_submission(received: Stform):
+    print(received)
+    return "all check"
