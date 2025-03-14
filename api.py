@@ -9,6 +9,7 @@ from glob import glob
 from time import sleep
 from datetime import date
 import json
+import pandas as pd
 
 api = FastAPI()
 #load the model
@@ -21,6 +22,22 @@ def read_root():
     return {"postmethod_101": "simple app to test post methods api requests",
             "docs": "http://localhost:8000/docs"}
 
+##### receive dataframe
+class MultiDataframe(BaseModel):
+    dfs: dict
+
+@api.post("/dataframe_to_server")
+def incoming_dataframe(data: MultiDataframe):
+    df = pd.DataFrame(data.dfs["df1"])
+    df.to_csv("example.csv", index=False)
+    print(df)
+    return "received df and saved as csv on server"
+
+##### send dataframe
+@api.get("/dataframe_to_client")
+def outgoing_dataframe():
+    df = pd.read_csv("example.csv")
+    return df.to_dict()
 
 ##### [EASY]
 # simple save and return, in a single request
