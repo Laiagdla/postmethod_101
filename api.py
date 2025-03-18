@@ -1,9 +1,9 @@
-from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
+from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Request
 from fastapi.responses import FileResponse, PlainTextResponse
 from PIL import Image as PILimage
 from io import BytesIO
 from pydantic import BaseModel
-from typing import List, Annotated
+from typing import List, Annotated, Dict
 from pathlib import Path
 from glob import glob
 from time import sleep
@@ -19,19 +19,46 @@ Path.mkdir(Path("images"), exist_ok=True)
 
 @api.get("/")
 def read_root():
-    return {"postmethod_101": "simple app to test post methods api requests",
+    return {"postmethod_101": "simple app to test post methods with python api requests",
             "docs": "http://localhost:8000/docs"}
 
-##### receive dataframe
-class MultiDataframe(BaseModel):
-    dfs: dict
 
+##### receive single dataframe
 @api.post("/dataframe_to_server")
-def incoming_dataframe(data: MultiDataframe):
-    df = pd.DataFrame(data.dfs["df1"])
+def incoming_dataframe(data: Dict):
+    print(data)
+    df = pd.DataFrame(data["df"])
     df.to_csv("example.csv", index=False)
     print(df)
     return "received df and saved as csv on server"
+
+##### receive multiple dataframes
+class MultiDataframe(BaseModel):
+    dfs: dict
+
+@api.post("/mlt_dataframes_to_server")
+def incoming_dataframe(data: MultiDataframe):
+    df1 = pd.DataFrame(data.dfs["df1"])
+    df2 = pd.DataFrame(data.dfs["df1"])
+    df1.to_csv("example1.csv", index=False)
+    df2.to_csv("example2.csv", index=False)
+    print(df1)
+    print(df2)
+    return "received multiple dfs and saved as csvs on server"
+
+
+##### receive dataframe and validate columns and types
+class DataframeValidated(BaseModel):
+    column1: List[str]
+    column2: List[str]
+    column3: List[int]
+
+@api.post("/dataframe_to_server_validated")
+def incoming_dataframe(data: DataframeValidated):
+    df = pd.DataFrame.from_dict(dict(data))
+    df.to_csv("example.csv", index=False)
+    print(data)
+    return "received df, validated data types and saved as csv on server"
 
 ##### send dataframe
 @api.get("/dataframe_to_client")
@@ -39,8 +66,7 @@ def outgoing_dataframe():
     df = pd.read_csv("example.csv")
     return df.to_dict()
 
-##### [EASY]
-# simple save and return, in a single request
+##### [EASY] # simple save and return, in a single request
 @api.post("/simple/")
 def simple_save(image: UploadFile = File(...)):
     img = PILimage.open(BytesIO(image.file.read()))
@@ -51,8 +77,7 @@ def simple_save(image: UploadFile = File(...)):
             "prediction": "model prediction",}
 
 
-##### [ADVANCED]
-# simple database to track predictions and retrieve them
+##### [ADVANCED] # simple database to track predictions and retrieve them
 def load_predictions():
     if Path.is_file(Path("predictions.json")):
         with open("predictions.json", "r") as f:

@@ -22,7 +22,7 @@ check = requests.get(BASE_URL)
 
 footer = st.container(border=True)
 col1, col2, col3 = footer.columns((1, 1, 3))
-with col1: st.info("Api check status:", icon="🦝")
+with col1: st.info("Api Status Check:", icon="🦝")
 with col2: st.warning(check.status_code, icon="💌")
 jsoncont = st.container(border=True)
 with col3: st.container(border=True).json(check.json(), expanded=False)
